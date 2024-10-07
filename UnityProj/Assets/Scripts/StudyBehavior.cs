@@ -64,7 +64,7 @@ public class StudyBehavior : MonoBehaviour
 
     void Awake()
     {
-        CSVManager.SetFilePath("pointCursor");
+        CSVManager.SetFilePath("bubbleCursor");
     }
 
     private void Start()
