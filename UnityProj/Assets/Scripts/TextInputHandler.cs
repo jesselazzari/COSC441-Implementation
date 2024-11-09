@@ -15,19 +15,30 @@ public class TextInputHandler : MonoBehaviour
         inputField.ActivateInputField(); // Set initial focus
     }
 
+    void Update()
+    {
+        // Keep the input field focused
+        if (!inputField.isFocused)
+        {
+            inputField.ActivateInputField();
+        }
+    }
     void HandleInput(string userInput)
     {
-        if (userInput.Length == 2) // Check if input has exactly 2 characters
+        if (userInput.Length == 2)
         {
-            // Find target based on input (assuming target names or tags match input)
-            GameObject target = GameObject.Find(userInput);
-            if (target != null)
+            // Find all GameObjects with the "TextTarget" tag
+            GameObject[] targets = GameObject.FindGameObjectsWithTag("TextTarget");
+
+            foreach (GameObject target in targets)
             {
-                Destroy(target); // Destroy the target
-            }
-            else
-            {
-                Debug.Log("No matching target found");
+                TextMeshPro textComponent = target.GetComponentInChildren<TextMeshPro>();
+
+                if (textComponent.text == userInput)
+                    {
+                        Debug.Log("Match found, destroying target: " + target.name);
+                        Destroy(target); // Destroy the target if the text matches user input
+                    }
             }
         }
         else
@@ -36,6 +47,5 @@ public class TextInputHandler : MonoBehaviour
         }
 
         inputField.text = ""; // Clear the input field
-        inputField.ActivateInputField(); // Re-focus input field
     }
 }
