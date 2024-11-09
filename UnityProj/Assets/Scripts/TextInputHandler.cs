@@ -12,6 +12,7 @@ public class TextInputHandler : MonoBehaviour
     {
         inputField.characterLimit = 2; // Limit input to 2 characters
         inputField.onEndEdit.AddListener(HandleInput); // Call HandleInput when Enter is pressed
+        inputField.onValueChanged.AddListener(ForceUpperCase);
         inputField.ActivateInputField(); // Set initial focus
     }
 
@@ -23,6 +24,12 @@ public class TextInputHandler : MonoBehaviour
             inputField.ActivateInputField();
         }
     }
+
+    void ForceUpperCase(string text)
+    {
+        inputField.text = text.ToUpper(); // Convert the text to uppercase
+    }
+    
     void HandleInput(string userInput)
     {
         if (userInput.Length == 2)
