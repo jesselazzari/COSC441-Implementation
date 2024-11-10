@@ -13,7 +13,7 @@ public class TextTargetManager : MonoBehaviour
     [SerializeField] private int numColumns = 5;  
     [SerializeField] private float gridOffsetY = 100f;
     private List<float> randomSizes;
-    private List<Target> targetList = new();
+    private List<GameObject> targetList = new();
     private Vector2 screenCentre;
     private Camera mainCamera;
     private void Start()
@@ -54,6 +54,25 @@ public class TextTargetManager : MonoBehaviour
             if (textComponent != null)
             {
                 textComponent.text = charPair;
+            }
+              
+            targetList.Add(targetObject);
+
+        }
+
+        // Randomly select one target to be the goal
+        if (targetList.Count > 0)
+        {
+            int goalIndex = Random.Range(0, targetList.Count);
+            GameObject goalTarget = targetList[goalIndex];
+
+            // Set the goal target's tag to "Goal" and set its color to green
+            goalTarget.tag = "Goal";
+
+            SpriteRenderer spriteRenderer = goalTarget.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = Color.green;
             }
         }
     }
