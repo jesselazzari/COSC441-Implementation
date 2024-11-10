@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 3681586702201701564}
   - component: {fileID: 5576481904368224058}
   m_Layer: 0
-  m_Name: TypeTarget
+  m_Name: TextTarget
   m_TagString: TextTarget
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
