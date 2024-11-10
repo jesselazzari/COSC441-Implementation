@@ -8,12 +8,11 @@ public class TextTargetManager : MonoBehaviour
     [SerializeField] private GameObject target;
     [SerializeField] private List<float> targetSizes;
     [SerializeField] private List<float> targetAmplitudes;
-    [SerializeField] private int numTargets;
-    [SerializeField] private int numRows = 5;  
-    [SerializeField] private int numColumns = 5;  
+    [SerializeField] private int numTargets = 16;
+    [SerializeField] private int numRows = 4;  
+    [SerializeField] private int numColumns = 4;  
     [SerializeField] private float gridOffsetY = 100f;
     private List<float> randomSizes;
-    private List<GameObject> targetList = new();
     private Vector2 screenCentre;
     private Camera mainCamera;
     private void Start()
@@ -24,8 +23,14 @@ public class TextTargetManager : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        CheckTargets();
+    }
+
     private void SpawnTargets()
     {
+        List<GameObject> targetList = new();
         List<Vector3> points = GenerateGridPoints();
         List<float> randomSizes = GenerateRandomSizes();
         List<char> leftChars = new List<char> { 'Q', 'W', 'E', 'R', 'A', 'S', 'D', 'F', 'Z', 'X', 'C', 'V' };
@@ -77,6 +82,25 @@ public class TextTargetManager : MonoBehaviour
         }
     }
 
+    private void CheckTargets()
+    {
+        // Find the goal target by tag
+        GameObject goalTarget = GameObject.FindWithTag("Goal");
+
+        // Check if the goal target is null
+        if (goalTarget == null)
+        {
+            GameObject[] textTargets = GameObject.FindGameObjectsWithTag("TextTarget");
+
+            foreach (GameObject textTarget in textTargets)
+            {
+                Destroy(textTarget);
+            }
+
+            SpawnTargets();
+        }
+    }
+
     List<Vector3> GenerateRandomPoints()
     {
         List<Vector3> pointList = new();
@@ -110,7 +134,7 @@ public class TextTargetManager : MonoBehaviour
         
         // Calculate the horizontal and vertical spacing
         float gridWidth = Screen.width / numColumns;
-        float gridHeight = Screen.height / numRows;
+        float gridHeight = Screen.height / numRows * 0.8f;
 
         for (int row = 0; row < numRows; row++)
         {

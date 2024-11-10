@@ -505,9 +505,9 @@ MonoBehaviour:
   targetSizes:
   - 1
   targetAmplitudes: []
-  numTargets: 25
-  numRows: 5
-  numColumns: 5
+  numTargets: 16
+  numRows: 4
+  numColumns: 4
   gridOffsetY: 100
 --- !u!1 &1051549448
 GameObject:
