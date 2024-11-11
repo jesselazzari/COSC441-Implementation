@@ -12,7 +12,7 @@ public class TextInputHandler : MonoBehaviour
     {
         inputField.characterLimit = 2; // Limit input to 2 characters
         inputField.onEndEdit.AddListener(HandleEnter); // Call HandleInput when Enter is pressed
-        inputField.onValueChanged.AddListener(ForceUpperCase);
+        inputField.onValueChanged.AddListener(HandleHover);
         inputField.ActivateInputField(); // Set initial focus
     }
 
@@ -25,9 +25,47 @@ public class TextInputHandler : MonoBehaviour
         }
     }
 
-    void ForceUpperCase(string text)
+    void HandleHover(string text) // Hover icon functionality and converts input to uppercase
     {
-        inputField.text = text.ToUpper(); // Convert the text to uppercase
+        string upperText = text.ToUpper();
+        inputField.text = upperText; 
+
+        GameObject[] targets = GameObject.FindGameObjectsWithTag("TextTarget");
+        GameObject goalTarget = GameObject.FindGameObjectWithTag("Goal");
+
+        foreach (GameObject target in targets)
+        {
+            TextMeshPro textComponent = target.GetComponentInChildren<TextMeshPro>();
+            SpriteRenderer spriteRenderer = target.GetComponent<SpriteRenderer>();
+            if (textComponent != null && spriteRenderer != null)
+            {
+                if (textComponent.text == upperText)
+                {
+                    spriteRenderer.color = new Color(0.169f, 0.169f, 0.169f); // On hover set to darker shade 
+                }
+                else
+                {
+                    spriteRenderer.color = Color.white; // Revert back to regular color 
+                }
+            }
+        }
+
+        if (goalTarget != null)
+        {
+            TextMeshPro goalTextComponent = goalTarget.GetComponentInChildren<TextMeshPro>();
+            SpriteRenderer goalSpriteRenderer = goalTarget.GetComponent<SpriteRenderer>();
+            if (goalTextComponent != null && goalSpriteRenderer != null)
+            {
+                if (goalTextComponent.text == upperText)
+                {
+                    goalSpriteRenderer.color =  goalSpriteRenderer.color = new Color(0f, 0.392f, 0f); // On hover set to darker shade of green
+                }
+                else
+                {
+                    goalSpriteRenderer.color = goalSpriteRenderer.color = Color.green; // Revert back to regular color 
+                }
+            }
+        }
     }
     
     void HandleEnter(string userInput)
