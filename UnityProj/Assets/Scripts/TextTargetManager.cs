@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement; 
+using System.IO;
 
 public class TextTargetManager : MonoBehaviour
 {
+    [SerializeField] private int participantID = 1;
     [SerializeField] private GameObject target;
     [SerializeField] private List<float> targetSizes;
     [SerializeField] private List<float> targetAmplitudes;
@@ -15,15 +17,29 @@ public class TextTargetManager : MonoBehaviour
     [SerializeField] private int numColumns = 4;  
     [SerializeField] private float gridOffsetY = 100f;
     private int currentTrial = 0;
-
+    private List<float> trialTimes = new List<float>(); // List to store trial times
+    private float trialStartTime; // Timer start time
+    private string outputFilePath; // Path to save CSV file
     private List<float> randomSizes;
     private Vector2 screenCentre;
     private Camera mainCamera;
     private void Start()
     {
         mainCamera = Camera.main;
-        screenCentre = new Vector2(Screen.width/2, Screen.height / 2);
-        SpawnTargets();
+        screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+
+        // Initialize CSV file path
+        outputFilePath = Path.Combine(Application.dataPath, $"Participant_{participantID}_TrialData.csv");
+
+        // Check if the file exists if so delete it
+        if (File.Exists(outputFilePath))
+        {
+            File.Delete(outputFilePath);
+            Debug.Log($"Existing file deleted: {outputFilePath}");
+        }
+
+        // Start the first trial
+        StartTrial();
 
     }
 
@@ -31,6 +47,51 @@ public class TextTargetManager : MonoBehaviour
     {
         CheckTargets();
     }
+
+    private void StartTrial()
+    {
+        trialStartTime = Time.time; // Record trial start time
+        SpawnTargets();
+    }
+
+    private void EndTrial()
+    {
+        float trialEndTime = Time.time; // Record trial end time
+        float trialDuration = trialEndTime - trialStartTime; // Calculate trial duration
+        trialTimes.Add(trialDuration); // Add duration to list
+
+        currentTrial++;
+        if (currentTrial < numTrials)
+        {
+            GameObject[] textTargets = GameObject.FindGameObjectsWithTag("TextTarget");
+            foreach (GameObject textTarget in textTargets)
+            {
+                Destroy(textTarget);
+            }
+            StartTrial(); // Start the next trial
+        }
+        else
+        {
+            SaveToCSV(); // Save data to CSV after all trials
+            SceneManager.LoadScene("EndScreen"); // Load EndScreen
+        }
+    }
+
+    private void SaveToCSV()
+    {
+        using (StreamWriter writer = new StreamWriter(outputFilePath))
+        {
+            writer.WriteLine("ParticipantID,TrialTime");
+
+            foreach (float trialTime in trialTimes)
+            {
+                writer.WriteLine($"{participantID},{trialTime}");
+            }
+        }
+
+        Debug.Log($"Trial data saved to {outputFilePath}");
+    }
+
 
     private void SpawnTargets()
     {
@@ -88,29 +149,14 @@ public class TextTargetManager : MonoBehaviour
 
     private void CheckTargets()
     {
-        // Find the goal target by tag
-        GameObject goalTarget = GameObject.FindWithTag("Goal");
-
-        // Check if the goal target is null
-        if (goalTarget == null)
+        if (Input.GetKeyDown(KeyCode.Return)) // Check if Enter key is pressed
         {
-            currentTrial++;
-            if (currentTrial < numTrials) 
+            GameObject goalTarget = GameObject.FindWithTag("Goal");
+            if (goalTarget != null)
             {
-                GameObject[] textTargets = GameObject.FindGameObjectsWithTag("TextTarget");
-
-                foreach (GameObject textTarget in textTargets)
-                {
-                    Destroy(textTarget);
-                }
-
-                SpawnTargets();
+                Destroy(goalTarget);
+                EndTrial(); // End the current trial
             }
-            else
-            {
-                SceneManager.LoadScene("EndScreen"); // Load EndScreen when all trials are complete
-            }
-            
         }
     }
 
