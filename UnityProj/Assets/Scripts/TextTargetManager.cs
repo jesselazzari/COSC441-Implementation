@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement; 
 
 public class TextTargetManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class TextTargetManager : MonoBehaviour
     [SerializeField] private int numRows = 4;  
     [SerializeField] private int numColumns = 4;  
     [SerializeField] private float gridOffsetY = 100f;
+    private int currentTrial = 0;
 
     private List<float> randomSizes;
     private Vector2 screenCentre;
@@ -92,14 +94,23 @@ public class TextTargetManager : MonoBehaviour
         // Check if the goal target is null
         if (goalTarget == null)
         {
-            GameObject[] textTargets = GameObject.FindGameObjectsWithTag("TextTarget");
-
-            foreach (GameObject textTarget in textTargets)
+            currentTrial++;
+            if (currentTrial < numTrials) 
             {
-                Destroy(textTarget);
-            }
+                GameObject[] textTargets = GameObject.FindGameObjectsWithTag("TextTarget");
 
-            SpawnTargets();
+                foreach (GameObject textTarget in textTargets)
+                {
+                    Destroy(textTarget);
+                }
+
+                SpawnTargets();
+            }
+            else
+            {
+                SceneManager.LoadScene("EndScreen"); // Load EndScreen when all trials are complete
+            }
+            
         }
     }
 
