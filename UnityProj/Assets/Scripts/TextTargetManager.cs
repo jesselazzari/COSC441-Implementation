@@ -8,10 +8,12 @@ public class TextTargetManager : MonoBehaviour
     [SerializeField] private GameObject target;
     [SerializeField] private List<float> targetSizes;
     [SerializeField] private List<float> targetAmplitudes;
+    [SerializeField] private float numTrials = 10;
     [SerializeField] private int numTargets = 16;
     [SerializeField] private int numRows = 4;  
     [SerializeField] private int numColumns = 4;  
     [SerializeField] private float gridOffsetY = 100f;
+
     private List<float> randomSizes;
     private Vector2 screenCentre;
     private Camera mainCamera;
