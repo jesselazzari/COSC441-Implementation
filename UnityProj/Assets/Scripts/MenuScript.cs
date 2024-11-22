@@ -7,10 +7,14 @@ using TMPro;
 public class MenuScript : MonoBehaviour
 {
     [SerializeField] private TMP_InputField participantInputField;
+    [SerializeField] private UnityEngine.UI.Button startButton;
     
     void Start()
     {
         participantInputField.ActivateInputField(); // Set initial focus
+        startButton.onClick.AddListener(StartGame);
+        startButton.interactable = false;
+        participantInputField.onValueChanged.AddListener(OnInputFieldChanged);
     }
     
     void Update()
@@ -20,6 +24,12 @@ public class MenuScript : MonoBehaviour
         {
             StartGame(); // Call the method to start the game
         }
+    }
+
+    private void OnInputFieldChanged(string input)
+    {
+        // Enable the button only when the input field contains a valid number
+        startButton.interactable = int.TryParse(input, out _);
     }
 
     public void StartGame()
