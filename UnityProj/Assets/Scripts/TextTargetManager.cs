@@ -7,7 +7,7 @@ using System.IO;
 
 public class TextTargetManager : MonoBehaviour
 {
-    [SerializeField] private int participantID = 1;
+    public int participantID;
     [SerializeField] private GameObject target;
     [SerializeField] private List<float> targetSizes;
     [SerializeField] private List<float> targetAmplitudes;
@@ -27,6 +27,7 @@ public class TextTargetManager : MonoBehaviour
     {
         mainCamera = Camera.main;
         screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+        participantID = PlayerPrefs.GetInt("ParticipantID", 1); // Retrieve participant ID from PlayerPrefs
 
         // Initialize CSV file path
         outputFilePath = Path.Combine(Application.dataPath, $"Participant_{participantID}_TrialData.csv");
