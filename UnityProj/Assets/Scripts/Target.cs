@@ -37,32 +37,17 @@ public class Target : MonoBehaviour
         // On hover exit set targets back to their normal colors
         if (gameObject.tag == "Goal")sprite.color = Color.green;
         else if (gameObject.tag == "Start")sprite.color = Color.red;
-        else sprite.color = Color.grey;
+        else sprite.color = Color.white;
     }
 
     public void OnSelect()
     {
         // Check if the current object is the goal target
-        if (gameObject.tag == "Goal")
+        if (gameObject.tag == "Goal" || gameObject.tag == "TextTarget")
         {
-            // Check if the "Start" target was destroyed 
-            GameObject startTarget = GameObject.FindGameObjectWithTag("Start");
-            if (startTarget != null) // If Start target exists, prevent selection
-            {
-                Debug.Log("You need to select the red start target before selecting the green goal target.");
-                return;
-            }
             
-            // Proceed to select the Goal target
             onSelect = true;
-            sprite.color = Color.grey; // Change color to indicate selection
-            StartCoroutine(DestroyGameObject(0.1f));
-        }
-        else if (gameObject.tag == "Start")
-        {
-            // Allow the selection and destruction of the Start target
-            onSelect = true;
-            sprite.color = Color.grey; // Change color to indicate selection
+            //sprite.color = Color.white; // Change color to indicate selection
             StartCoroutine(DestroyGameObject(0.1f));
         }
     }

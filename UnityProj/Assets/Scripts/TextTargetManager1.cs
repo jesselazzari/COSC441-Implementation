@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine.SceneManagement; 
 using System.IO;
 
-public class TextTargetManager : MonoBehaviour
+public class TargetManager : MonoBehaviour
 {
     public int participantID;
     [SerializeField] private GameObject target;
@@ -99,11 +99,33 @@ public class TextTargetManager : MonoBehaviour
         List<GameObject> targetList = new();
         List<Vector3> points = GenerateGridPoints();
         List<float> randomSizes = GenerateRandomSizes();
+        List<char> leftChars = new List<char> { 'Q', 'W', 'E', 'R', 'A', 'S', 'D', 'F', 'Z', 'X', 'C', 'V' };
+        List<char> rightChars = new List<char> { 'Y', 'U', 'I', 'O', 'P', 'J', 'K', 'K', 'N', 'M' };
+        List<string> usedCombinations = new List<string>();
 
         for (int i = 0; i < numTargets; i++)
         {
             GameObject targetObject = Instantiate(target, points[i], Quaternion.identity, transform);
             targetObject.transform.localScale = Vector3.one * randomSizes[i];
+
+            string charPair; // Generate a unique character combination
+            do
+            {
+                char leftChar = leftChars[Random.Range(0, leftChars.Count)];
+                char rightChar = rightChars[Random.Range(0, rightChars.Count)];
+                charPair = $"{leftChar}{rightChar}";
+            } 
+            while (usedCombinations.Contains(charPair)); // Repeat until a unique pair is found
+
+            // Add the unique combination to the list
+            usedCombinations.Add(charPair);
+
+            // Set the unique combination to the TextMeshPro component
+            TextMeshPro textComponent = targetObject.GetComponentInChildren<TextMeshPro>();
+            if (textComponent != null)
+            {
+                textComponent.text = charPair;
+            }
               
             targetList.Add(targetObject);
 
@@ -128,10 +150,14 @@ public class TextTargetManager : MonoBehaviour
 
     private void CheckTargets()
     {
-        GameObject goalTarget = GameObject.FindWithTag("Goal");
-        if (goalTarget == null)
+        if (Input.GetKeyDown(KeyCode.Return)) // Check if Enter key is pressed
         {
-            EndTrial(); // End the current trial
+            GameObject goalTarget = GameObject.FindWithTag("Goal");
+            if (goalTarget != null)
+            {
+                Destroy(goalTarget);
+                EndTrial(); // End the current trial
+            }
         }
     }
 
